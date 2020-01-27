@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css?family=Nixie+One|Quicksand:500&display=swap');
+
+$light-shades: #F4F1F8;
+$light-accent: #C5C7F5;
+$main-color: #7A618F;
+$dark-accent: #996A94;
+$dark-shades: #3a2c47;
+$font-heading: 'Nixie One', cursive;
+$font-text: 'Quicksand', sans-serif;
+
+%contract-item {
+  padding: 0 20%;
+}
+
+.current {
+  text-decoration: none;
+  color: $light-shades;
+  font-weight: bold;
+}
+
+.contract {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0px;
+  
+  h2 {
+    font-family: $font-heading;
+    color: $main-color;
+  }
+
+  ul {
+    li {
+      line-height: 2;
+    }
+  }
+}
+
+.contract-item-odd {
+  @extend %contract-item;
+  background-color: $light-shades;
+}
+
+.contract-item-even {
+  @extend %contract-item;
+  background-color: $light-accent;
+}
+
+.posts {
+  li {
+    line-height: 2;
+  }
+
+  a {
+    color: $main-color;
+
+    &:hover {
+      color: $main-color;
+    }
+  }
+}
+
+.post-meta {
+  font-style: italic;
+}
+
+body {
+  background-color: $light-shades;
+  font-family: $font-text;
+  color: $dark-shades;
+  margin: 0px;
+}
+
+a {
+  text-decoration: underline;
+}
+
+header, footer {
+  background-color: $main-color;
+  color: $light-shades;
+  padding: 10px 20px;
+  margin: 0px;
+
+  h1 {
+    display: inline;
+    font-size: 1em;
+    font-weight: normal;
+    font-family: $font-heading;
+  }
+
+  p {
+    margin: 0px;
+  }
+
+  a {
+    color: $light-shades;
+
+    &:hover {
+      color: $light-shades;
+    }
+  }
+}
+
+nav {
+  display: inline;
+
+  ul {
+    display: inline;
+    list-style: none;
+  }
+
+  li {
+    display: inline;
+    margin-right: 20px;
+  }
+}
+
+main {
+  margin: 0px;
+  padding: 5% 20%;
+  line-height: 2;
+
+  h1, h2 {
+    font-family: $font-heading;
+    color: $main-color;
+  }
+
+  a {
+    color: $main-color;
+
+    &:hover {
+      color: $main-color;
+    }
+  }
+
+  img {
+    width: 50%;
+    display: block;
+  }
+}

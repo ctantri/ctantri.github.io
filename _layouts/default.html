@@ -2,30 +2,20 @@
 <html>
 
 <head>
+  <meta charset="utf-8">
   <title>{{ page.title }}</title>
   <!-- link to main stylesheet -->
-  <link rel="stylesheet" type="text/css" href="/css/main.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 
 <body>
-  <nav>
-    <ul>
-      <li><a href="/">Introduction</a></li>
-      <li><a href="/learning-contract">Learning Contract</a></li>
-      <li><a href="/blog">Progress Blog</a></li>
-    </ul>
-  </nav>
-  <div class="container">
 
-    {{ content }}
+  {% include header.html %}
 
-  </div><!-- /.container -->
-  <footer>
-    <ul>
-      <li><a href="mailto:codename.orchid@gmail.com">email</a></li>
-      <li><a href="https://github.com/ctantri">github.com/ctantri</a></li>
-    </ul>
-  </footer>
+  {{ content }}
+
+  {% include footer.html %}
+  
 </body>
 
 </html>
