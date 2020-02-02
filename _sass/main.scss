@@ -60,6 +60,10 @@ $font-text: 'Quicksand', sans-serif;
   }
 }
 
+.original-size {
+  width: 100%;
+}
+
 .post-meta {
   font-style: italic;
 }
@@ -69,6 +73,13 @@ body {
   font-family: $font-text;
   color: $dark-shades;
   margin: 0px;
+}
+
+code {
+  font-size: 1.25em;
+  background-color: $light-accent;
+  color: $dark-shades;
+  padding: 1px 3px;
 }
 
 a {
