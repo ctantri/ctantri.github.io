@@ -106,13 +106,13 @@ Initially, I thought that the sensor that I got was a [DS18B20 waterproof temper
 
 The soil moisture sensor and light sensor each has 3 pin connections, and I *think* I can handle that configuration now. This temperature sensor is more complicated though - it has 6. Danon walked me through the wiring, starting with an explanation of 2 bus communication protocols that we could use to set the sensor up: I2C and SPI. The latter looked quite complicated and seemed to require quite a few wires; we went with the former.
 
-![Hand-drawn diagrams of the I2C and SPI bus communication protocols](/assets/images/week-03e.jpg)
+![Hand-drawn diagrams of the I2C and SPI bus communication protocols](/assets/images/week-03e.JPG)
 
 Luckily, even though there were more pin connections to make compared to the other sensors, they were mostly made obvious by the labels on the sensor and on the development board. The only tricky bit was that the default protocol configuration was SPI, so we had to change it to I2C by wiring the SDO to VCC.
 
-![BME280 temperature sensor](/assets/images/week-03g.jpg)
+![BME280 temperature sensor](/assets/images/week-03g.JPG)
 
-![Hand-drawn diagram of the extra wiring needed to configure the sensor to use I2C protocol instead of SPI](/assets/images/week-03f.jpg)
+![Hand-drawn diagram of the extra wiring needed to configure the sensor to use I2C protocol instead of SPI](/assets/images/week-03f.JPG)
 
 ### Coding for the temperature sensor
 
