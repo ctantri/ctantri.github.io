@@ -27,12 +27,15 @@ Tasks:
 
 ## Sprint 4: Freestyle
 
-This sprint we were free to choose what we wanted to work on, so I chose to focus on completing my prototype (as much as I could anyway). We were told that in the next sprint we'd be shrinking it down and starting on mechanical design for an enclosure to house it. I thought I'd better finalise my prototype. I had last minute ideas that I could not get to this sprint, however, such as adding a grow light to my device that I could potentially switch on and off in response to detected light levels.
+This sprint we were free to choose what we wanted to work on, so I chose to focus on completing my prototype (as much as I could anyway). We were told that in the next sprint we'd be shrinking it down and starting on mechanical design for an enclosure to house it. I thought I'd better finalise my prototype. I had last minute ideas that I could not get to this sprint, however, such as:
+
+- Adding a grow light to my device that I could potentially switch on and off in response to detected light levels; and
+- Setting up Over The Air (OTA) firmware updates for my prototype (Danon introduced this idea to me).
 
 Tasks:
 - [x] Send alerts to mobile phone
 - [x] Speed up data pipeline: configure Telegraf data flush interval from 10 seconds to 1 second (`flush_interval` setting in `agent` section of the configuration file)
-- [ ] ~~Try the *IoT OnOff* iOS app for data visualisation on the mobile phone~~ (Grafana works fine in the mobile browser)
+- [ ] ~~Try the *IoT OnOff* iOS app for data visualisation on the mobile phone~~ (Grafana seems to work fine in the mobile browser)
 {: style='list-style-type: none'}
 
 ## Artefact #1: Soil moisture sensor data visualisation
