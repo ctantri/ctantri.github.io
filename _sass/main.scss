@@ -5,6 +5,7 @@ $light-accent: #C5C7F5;
 $main-color: #7A618F;
 $dark-accent: #996A94;
 $dark-shades: #3a2c47;
+$code-shade: #ffffff;
 $font-heading: 'Nixie One', cursive;
 $font-text: 'Quicksand', sans-serif;
 
@@ -77,7 +78,7 @@ body {
 
 code {
   font-size: 1.25em;
-  background-color: $light-accent;
+  background-color: $code-shade;
   color: $dark-shades;
   padding: 1px 3px;
 }

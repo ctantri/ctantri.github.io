@@ -1,15 +1,17 @@
 ---
 layout: post
-title: "Submission 3a - Sprint 3"
+title: "Submission 3"
 date: 2020-02-16
 ---
 
 ### Sections
 
 - [Sprint 3: Connecting the IoT hardware prototype to the cloud infrastructure](#sprint-3-connecting-the-iot-hardware-prototype-to-the-cloud-infrastructure)
+- [Sprint 4: Freestyle](#sprint-4-freestyle)
 - [Artefact #1: Soil moisture sensor data visualisation](#artefact-1-soil-moisture-sensor-data-visualisation) + [Reflection](#reflection-on-artefact-1)
 - [Artefact #2: Light sensor data visualisation](#artefact-2-light-sensor-data-visualisation) + [Reflection](#reflection-on-artefact-2)
 - [Artefact #3: Temperature sensor data visualisation](#artefact-3-temperature-sensor-data-visualisation) + [Reflection](#reflection-on-artefact-3)
+- [Artefact #4: Setting up soil moisture alerts](#artefact-4-setting-up-soil-moisture-alerts) + [Reflection](#reflection-on-artefact-4)
 
 ## Sprint 3: Connecting the IoT hardware prototype to the cloud infrastructure
 
@@ -21,6 +23,16 @@ Tasks:
 - [x] Connect temperature sensor and visualise its data
 - [x] Map raw soil moisture readings to percentage
 - [x] Install and run Chronograf on the server
+{: style='list-style-type: none'}
+
+## Sprint 4: Freestyle
+
+This sprint we were free to choose what we wanted to work on, so I chose to focus on completing my prototype (as much as I could anyway). We were told that in the next sprint we'd be shrinking it down and starting on mechanical design for an enclosure to house it. I thought I'd better finalise my prototype. I had last minute ideas that I could not get to this sprint, however, such as adding a grow light to my device that I could potentially switch on and off in response to detected light levels.
+
+Tasks:
+- [x] Send alerts to mobile phone
+- [x] Speed up data pipeline: configure Telegraf data flush interval from 10 seconds to 1 second (`flush_interval` setting in `agent` section of the configuration file)
+- [ ] ~~Try the *IoT OnOff* iOS app for data visualisation on the mobile phone~~ (Grafana works fine in the mobile browser)
 {: style='list-style-type: none'}
 
 ## Artefact #1: Soil moisture sensor data visualisation
@@ -76,7 +88,7 @@ Following the guide linked above, the wiring seemed quite straightforward. My ma
 
 ### Coding for the light sensor
 
-I started a new PlatformIO project in order to have a clean slate from which I can try out the sample sketch in the getting started guide. It was short and straightforward, so once I confirmed the sensor was connected and functional, I added the code to my prototype codebase. It was starting to become unwieldy to be building the MQTT message by appending strings with `+` however; I wondered whether there was a string builder function I could use instead. Then, while trying to help Malan with her code I happened to see that she was using `snprintf()`. This turned out to be a buffer which I then used to build my message before publishing it. I think it makes my code more readable.
+I started a new PlatformIO project in order to have a clean slate from which I could try out the sample sketch in the getting started guide. It was short and straightforward, so once I confirmed the sensor was connected and functional, I added the code to my prototype codebase. It was starting to become unwieldy to be building the MQTT message by appending strings with `+` however; I wondered whether there was a string builder function I could use instead. Then, while trying to help Malan with her code I happened to see that she was using `snprintf()`. This turned out to be a buffer which I then used to build my message before publishing it. I think it makes my code more readable.
 
 Danon also advised me to use the `BlynkTimer` library instead of the `delay()` I'd been using. Luckily for me I had used it in the Sprint 1 code that he walked me through, so it was relatively easy to replicate the usage in my current codebase. To be honest I didn't think I noticed any difference, but it turned out `delay()` basically paused the processor and blocked other processes - it did not allow multi-tasking (reference: [Ditch the delay()](https://learn.adafruit.com/multi-tasking-the-arduino-part-1/ditch-the-delay)).
 
@@ -127,3 +139,54 @@ By this point, I was just appending the `temperature=` and `humidity=` fields to
 Learning about the bus communication protocols reminded me of a networking class, except that instead of connecting computers to a switch/router we were connecting sensors to a development board. I remembered an article I came across while researching for a networking assignment - if I remembered correctly it was about the design for a huge network of sensors in the context of underground mines. Given how miniscule my prototype was, I thought it was good to have this learning opportunity I might otherwise not have.
 
 While looking for example code, I realised that I usually defaulted to searching Google, even when I had the Platform IO library available to me. It felt a bit silly because there was no need to search the whole Internet when the latter would already contain the most relevant examples. Duh.
+
+## Artefact #4: Setting up soil moisture alerts
+
+What I had in mind was a prototype that monitors my succulents, visualises the sensor data on a dashboard and also send me alerts when the sensor readings reach certain thresholds, e.g. when the soil is dry I should get an alert to tell me it is time to water. I think the only feature that my prototype is missing at the moment is the alert capability.
+
+I had come across Kapacitor mentioned multiple times while looking up references for setting up the cloud infrastructure in Sprint 2. It is the final component of InfluxData's TICK stack: Telegraf, InfluxDB, Chronograf and Kapacitor. Kapacitor is a real-time data processing engine with the ability to send alerts based on a specified data trigger. I installed and set it up to run in a Docker container on the server.
+
+Kapacitor has many alert handlers to choose from, including email, MQTT, HTTP POST and Slack (see [this list of supported handlers](https://docs.influxdata.com/kapacitor/v1.5/working/alerts/#list-of-handlers)). I wanted to receive the alerts on my phone, so I decided to go with the Slack alert handler. As for the other possiblities I considered:
+- Email: To be honest I didn't want to get more emails than I already do (and I would've had to set up a SMTP server)
+- MQTT: Could possibly work with the IoT OnOff iOS app, but I prefer and am already familiar with Slack
+- HTTP POST: I would've had to set up an endpoint for it... :/
+
+Aside from the connection to InfluxDB, the changes to be made to the Kapacitor configuration file depended on which alert handler(s) were being used. The [official documentation for Slack alert handlers](https://docs.influxdata.com/kapacitor/v1.5/event_handlers/slack) provided the necessary details. In my case, I set up a new Slack workspace for my personal use, added a #succulent-monitor channel for the alerts, and created an incoming webhook in Slack for Kapacitor.
+
+I then followed [the official guide](https://docs.influxdata.com/kapacitor/v1.5/introduction/getting-started/#triggering-alerts-from-stream-data) to setting up the alerts. I needed to set up a script to let Kapacitor know which data to pay attention to, what the trigger condition was, and what alert message to send to which alert handler. It turned out alerts can be set up in Kapacitor in 2 ways:
+
+1. Using TICKscript only (which I did; see below)
+2. Using TICKscript that publishes to a topic, and handler(s) (defined in `.yaml` files) that subscribe to the topic and send the alert messages
+
+The second method seems to allow more customisation, such as aggregating alerts over a specified time period or filtering them by level (`OK`, `INFO`, `WARNING` and `CRITICAL`). I plan to try this out, but in the meantime this was what the first version of my script looked like:
+
+```
+stream
+  |from()
+    .measurement('catt')
+  |alert()
+    .warn(lambda: "soil_moisture" < 5)
+    .stateChangesOnly()
+    .message('Pot is dry. Time to water')
+    .slack()
+      .workspace('ctantri')
+      .iconEmoji(':cactus:')
+```
+
+I've since had to increase the threshold from 5 to 20 because the sensor readings fluctuated quite a bit and I ended up with waaay too many alerts during testing :(
+
+![Screenshot of alerts received on Slack](/assets/images/week-03i.PNG)
+
+**Note 1:** There was some troubleshooting involved during testing - Kapacitor was not able to connect to InfluxDB because it turned out I missed one line in the configuration file that specified the Kapacitor IP address. Oopsie :( I restarted Kapacitor and the database a few times while troubleshooting to see whether the new IP address would flow through on its own, but in the end I had to [manually create a new subscription in InfluxDB](https://docs.influxdata.com/influxdb/v1.7/administration/subscription-management/#create-subscriptions) before it would send data to Kapacitor.
+
+**Note 2:** I noticed that there was an alert generated every time the threshold is crossed *in both directions*, i.e. both when the soil moisture level goes *up* above 20% and when it goes *down* below 20%. I only wanted to be alerted of the latter :(
+
+**Note 3:** According to [the documentation](https://docs.influxdata.com/kapacitor/v1.5/tick/introduction/#stream-or-batch), Kapacitor can process data either in real-time (as a stream) or in batches. In the case of a stream, it is possible to process and transform data before it is written to InfluxDB.
+
+## Reflection on Artefact #4
+
+Firstly, it seemed that I was getting comfortable with adding to the cloud infrastructure, perhaps because Kapacitor was also an InfluxData product - the setup procedure was similar to that of the rest of the TICK stack. I set it up without following any step-by-step tutorial this time around. I just referred to the [documentation for the Docker image for Kapacitor](https://hub.docker.com/_/kapacitor) for the `docker pull` and `docker run` commands, along with the command for generating a default configuration file.
+
+Secondly, I felt I got plenty of practice using Docker commands while testing and troubleshooting, mainly to do with running, stopping and restarting a container, and also executing commands inside specific containers. I also learnt how to copy files into a container. All in all it was a really productive learning experience that ended up making me feel *a bit* more confident using Docker :)
+
+Lastly, after running the tests and seeing the number of alerts generated within a minute I was rather relieved that I had chosen Slack over email... I realise that I do not actually need to know *immediately* when the soil becomes dry; I just wanted *one* alert to let me know within a day of it happening, so I plan to try calibrating the alerts by batching/aggregating/filtering.
