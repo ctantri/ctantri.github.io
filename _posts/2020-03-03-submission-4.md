@@ -73,7 +73,7 @@ I did the same for the other unit, which consisted of the mini ESP32, a Nokia ba
 
 ![Circuit diagram](/assets/images/week-04i.JPG)
 
-![Planning sheet with stencilled prototype board](/assets/images/week-04j.JPG)
+![Planning sheet with stencilled prototype board](/assets/images/week-04j.jpg)
 
 ![Wiring plan in a drawing app](/assets/images/week-04k.PNG)
 
